@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -7,10 +7,14 @@ import EditIcon from "@material-ui/icons/Edit";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import Fab from "@material-ui/core/Fab";
 import Button from "@material-ui/core/Button";
+// Types
+import { TaskType } from "Context/TasksContext";
 
 interface taskProps {
-  task: { id: number; name: string };
-}
+    task: TaskType;
+    setLogMode?: Dispatch<SetStateAction<boolean>>;
+    setToBloggedID?: Dispatch<SetStateAction<number | null>>;
+  }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
