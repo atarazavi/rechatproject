@@ -1,3 +1,18 @@
-.App {
+html{
+  height: 100%;
+}
+body{
+  background-image : url(./Resources/assets/austin-distel-unsplash.jpg);
+  margin-top: 20px;
+  padding: 0 20px;
+}
+*{
+  box-sizing: border-box;
+}
+.logoContainer{
   text-align: center;
+}
+.headerLogo{
+  width: 100%;
+  max-width: 400px;
 }
