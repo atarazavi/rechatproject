@@ -10,6 +10,7 @@ import AddIcon from "@material-ui/icons/Add";
 import EditIcon from "@material-ui/icons/Edit";
 import CloseIcon from "@material-ui/icons/Close";
 import Collapse from "@material-ui/core/Collapse";
+import { possibleStatus } from "Status";
 import { TasksContext } from "Context/TasksContext";
 import useTasksLoading from "../TasksList/hooks/useTasksLoading";
 
@@ -31,13 +32,16 @@ export default function Form() {
   const [mode, setMode] = useState("add");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const { tasks, addTask, toBEditedTaskID } = useContext(
+  const [status, setStatus] = useState("");
+  const { tasks, addTask, toBEditedTaskID, editTask, editThisID } = useContext(
     TasksContext
   );
   const reset = () => {
+    editThisID(null);
     setMode("add");
     setTitle("");
     setDescription("");
+    setStatus("");
   };
   useTasksLoading();
   if (toBEditedTaskID && mode === "add" && tasks.length > 0) {
@@ -47,9 +51,16 @@ export default function Form() {
     )[0];
     setTitle(toBEditedTaskObject.name);
     setDescription(toBEditedTaskObject.description);
+    setStatus(toBEditedTaskObject.status);
   }
   const AddOrSaveTask = () => {
+    if (mode === "add") {
       title && description && addTask(title, description);
+    } else if (toBEditedTaskID && tasks) {
+      title &&
+        description &&
+        editTask(+toBEditedTaskID, title, description, status);
+    }
     reset();
   };
 
@@ -83,6 +94,31 @@ export default function Form() {
           }}
         />
       </div>
+      <Collapse in={mode !== "add"}>
+        <div>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel id="demo-status-select">
+              Status
+            </InputLabel>
+            <Select
+              labelId="demo-status-select"
+              id="demo-status-select"
+              inputProps={{ "data-testid": "status-select" }}
+              value={status}
+              onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                setStatus(e.target.value as string);
+              }}
+              label="Age"
+            >
+              {possibleStatus?.map((option: string) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+      </Collapse>
       <div>
         <Button
           variant="contained"
@@ -90,9 +126,22 @@ export default function Form() {
           fullWidth
           color="primary"
           size="large"
-          startIcon={<AddIcon />}
+          startIcon={mode === "add" ? <AddIcon /> : <EditIcon />}
         >
+          {mode === "add" ? `Add` : `Save`}
         </Button>
+        {mode !== "add" && (
+          <Button
+            className={classes.mt10}
+            onClick={reset}
+            variant="contained"
+            color="secondary"
+            size="large"
+            startIcon={<CloseIcon />}
+          >
+            Cancel
+          </Button>
+        )}
       </div>
     </form>
   );
