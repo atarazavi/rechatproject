@@ -1,16 +1,55 @@
-import React, { useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
+import Task from "../Task/Task";
+import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import Alert from "@material-ui/lab/Alert";
 import Skeleton from "@material-ui/lab/Skeleton";
-import Task from "../Task/Task"
+import { TasksContext } from "Context/TasksContext";
+import useTasksLoading from "./hooks/useTasksLoading";
+import CloseIcon from "@material-ui/icons/Close";
+import Fab from "@material-ui/core/Fab";
 
-
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      width: "100%",
+      "& > * + *": {
+        marginTop: theme.spacing(2),
+      },
+    },
+    logContainer: {
+      margin: theme.spacing(2),
+      position: "relative",
+      width: "100%",
+    },
+    closeFab: {
+      position: "absolute",
+      right: theme.spacing(1),
+      top: theme.spacing(1),
+    },
+  })
+);
 
 export default function TasksList() {
+  const classes = useStyles();
   const [logMode, setLogMode] = useState(false);
-  const [isLoading, setisLoading] = useState(false);
-  const [tasks, setTasks] = useState([{id:1, name: '1'}, {id:2, name: '2'}]);
+  const [toBloggedID, setToBloggedID] = useState<null | number>(null);
+  const { tasks, isLoading, apiError, logs, fetchLogs } = useContext(TasksContext);
+  useTasksLoading();
+  useEffect(() => {
+    fetchLogs()
+  }, [fetchLogs, toBloggedID])
+  if (apiError)
+    return (
+      <div className={classes.root}>
+        <Alert severity="error">
+          Oops! Something went wrong : {apiError} — call Administrative
+          department!
+        </Alert>
+      </div>
+    );
 
   if (isLoading && tasks.length < 1)
     return (
@@ -44,10 +83,48 @@ export default function TasksList() {
               }
         }
       >
-        {tasks.length > 0 ? (
+        {logMode && toBloggedID ? (
+          <div className={classes.logContainer}>
+            {logs
+              ?.filter((log) => +log.relatedTaskID === +toBloggedID)
+              .map((eachRelatedLog) => (
+                <div key={eachRelatedLog.id}>
+                  <Typography variant="body1" gutterBottom>
+                    log type: {eachRelatedLog.type}
+                  </Typography>
+                  <Typography variant="body1" gutterBottom>
+                    log time: {eachRelatedLog.createdAt.toString()}
+                  </Typography>
+                  <Typography variant="body1" gutterBottom>
+                    log details (before and after): <br />
+                    {eachRelatedLog.before}
+                    <br />
+                    {eachRelatedLog.after}
+                  </Typography>
+                  <hr />
+                </div>
+              ))}
+            <Fab
+              size="medium"
+              className={classes.closeFab}
+              color="secondary"
+              aria-label="Close"
+              onClick={() => {
+                setLogMode(false);
+                setToBloggedID(null);
+              }}
+            >
+              <CloseIcon />
+            </Fab>
+          </div>
+        ) : tasks.length > 0 ? (
           tasks.map((task) => (
             <Grid item key={task.id} xs={12} sm={6}>
-              <Task task={task}></Task>
+              <Task
+                task={task}
+                setLogMode={setLogMode}
+                setToBloggedID={setToBloggedID}
+              />
             </Grid>
           ))
         ) : (
