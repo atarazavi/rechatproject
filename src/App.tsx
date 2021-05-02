@@ -1,7 +1,7 @@
 import React from 'react';
-import Form from './Components/Form/Form';
-import TasksList from './Components/TasksList/TasksList';
-import './App.css';
+import Form from 'Components/Form/Form';
+import TasksList from 'Components/TasksList/TasksList';
+import 'App.css';
 
 function App() {
   return (
