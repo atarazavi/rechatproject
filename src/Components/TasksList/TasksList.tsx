@@ -3,6 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Skeleton from "@material-ui/lab/Skeleton";
+import Task from "../Task/Task"
 
 
 
@@ -46,7 +47,7 @@ export default function TasksList() {
         {tasks.length > 0 ? (
           tasks.map((task) => (
             <Grid item key={task.id} xs={12} sm={6}>
-              {task.name}
+              <Task task={task}></Task>
             </Grid>
           ))
         ) : (
