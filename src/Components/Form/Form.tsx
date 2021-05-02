@@ -110,7 +110,7 @@ export default function Form() {
               }}
               label="Age"
             >
-              {possibleStatus?.map((option: string) => (
+              {possibleStatus[status]?.map((option: string) => (
                 <MenuItem key={option} value={option}>
                   {option}
                 </MenuItem>
