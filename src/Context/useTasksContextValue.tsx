@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { TasksContextData, TaskType, LogsType } from "../Context/TasksContext";
+import { TasksContextData, TaskType, LogsType } from "Context/TasksContext";
 import axios from "axios";
 
 export default function useTasksContextValue(): TasksContextData {
